@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Wind-speed</string>
+    <string name="facebook_app_id">338853244112460</string>
+    <string name="fb_login_protocol_scheme">fb338853244112460</string>
 </resources>
