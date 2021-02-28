@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 String userId = loginResult.getAccessToken().getUserId();
                 setResult(RESULT_OK);
                 Log.i(FBTAG, userId);
-                finish();
+                // TODO MOVE TO NEXT PAGE
             }
 
             @Override
@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                 // App code
                 Log.i(FBTAG, "login was canceled");
                 setResult(RESULT_CANCELED);
-                finish();
             }
 
             @Override
