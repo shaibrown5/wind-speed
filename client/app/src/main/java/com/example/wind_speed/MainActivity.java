@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(FBTAG, "login was success");
                 String userId = loginResult.getAccessToken().getUserId();
                 setResult(RESULT_OK);
-                // TODO MOVE TO NEXT PAGE
+                Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                startActivity(intent);
             }
 
             @Override
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //called whn an activity I launch exists.
+    //called when an activity I launch exists.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -100,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         // this is how the data is shown:
                         // {"name":"Shai Brown","email":"email@gmail.com","location":{"id":"long_id","name":"city_name, country"},"first_name":"Shai","last_name":"Brown","id":"long_id"}
-                        Log.d(FBTAG, object.toString());
                         try {
+                            Log.d(FBTAG, object.toString());
                             String name = object.getString("name");
                             String id = object.getString("id");
                         } catch (JSONException e) {
@@ -112,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         // retreive info from graph api
         Bundle bundle = new Bundle();
-        //
         bundle.putString("fields", "id, name, email, location, first_name, last_name");
 
         graphRequest.setParameters(bundle);
@@ -131,7 +131,10 @@ public class MainActivity extends AppCompatActivity {
                 LoginManager.getInstance().logOut();
                 Log.i(FBTAG, " user is logged out of facebook");
             }
-            //TODO ELSE....
+            else{
+                Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                startActivity(intent);
+            }
         }
     };
 
