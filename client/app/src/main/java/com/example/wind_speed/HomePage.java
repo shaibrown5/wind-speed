@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
@@ -12,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class HomePage extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    Button logOut;
+    Button windpeedButton;
     private Spinner spinnerLocation;
     private static final String TAG = "home_page";
 
