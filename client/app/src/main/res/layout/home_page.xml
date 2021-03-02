@@ -10,14 +10,13 @@
         android:id="@+id/logOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="4dp"
         android:text="Log out"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/winspeedButton"
@@ -39,6 +38,7 @@
         android:layout_height="49dp"
         android:layout_marginEnd="6dp"
         android:layout_marginRight="6dp"
+        android:layout_marginBottom="3dp"
         android:text="Choose a Location:"
         android:textColor="#010209"
         android:textSize="18sp"
@@ -47,29 +47,37 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.842" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/infoText">
 
+        <!--        <com.google.android.gms.maps.MapView-->
+        <!--            android:id="@+id/mapView"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="638dp" />-->
         <Spinner
             android:id="@+id/locationSpin"
             android:layout_width="match_parent"
-            android:layout_height="43dp"
+            android:layout_height="38dp"
             android:dropDownWidth="match_parent"
             android:visibility="visible"
             tools:visibility="visible" />
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView"
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="638dp" />
+            android:layout_height="641dp"
+            tools:context=".MapsActivity" />
 
     </LinearLayout>
 
