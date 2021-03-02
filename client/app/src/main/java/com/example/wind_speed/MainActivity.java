@@ -15,8 +15,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.Login;
+import com.facebook.GraphResponse;;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -34,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Button loginButton;
     private LoginButton fbLogin;
     private CallbackManager callbackManager;
+    protected Bundle facebookInfoBundle;
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
     private static final String TAG = "MainActivity";
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         signUp = (Button) findViewById(R.id.signUpButton);
         fbLogin = (LoginButton) findViewById(R.id.fbLoginButton);
         loginButton = (Button) findViewById(R.id.loginButton);
+        userName = (EditText) findViewById(R.id.userName);
+        pass = (EditText) findViewById(R.id.userPassword);
 
         // when sign up is clicked, go to Sign up page
         signUp.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkInput()){
                     //TODO LOGIN....
-
+                    Log.i(TAG, "inputs are correct form");
 
                     resetInputs();
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
@@ -130,12 +132,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // retreive info from graph api
-        Bundle bundle = new Bundle();
-        bundle.putString("fields", "id, name, email, location, first_name, last_name");
+        facebookInfoBundle = new Bundle();
+        facebookInfoBundle.putString("fields", "id, name, email, location, first_name, last_name");
 
-        graphRequest.setParameters(bundle);
+        graphRequest.setParameters(facebookInfoBundle);
         graphRequest.executeAsync();
-
     }
 
     /**
@@ -172,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
         if (userName.getText().toString().isEmpty()) {
             isValid = false;
             userName.setError("Must not be empty");
-        } else {
+        }
+        else{
             String emailText = userName.getText().toString();
             isValid = android.util.Patterns.EMAIL_ADDRESS.matcher(emailText).matches();
             if (!isValid) {
@@ -188,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void resetInputs(){
-        userName.setText("");
+        Log.i(TAG, "reseting inputs");
+        userName.setText(null);
         userName.setHint("Username");
-
-        pass.setText("");
+        pass.setText(null);
         pass.setHint("Password");
     }
 

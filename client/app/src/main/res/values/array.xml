@@ -2,7 +2,6 @@
 <resources>
 
     <string-array name="pre_def_locations">
-        <item></item>
         <item>Sydney</item>
         <item>Bali</item>
         <item>Tel Aviv</item>
