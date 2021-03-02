@@ -3,8 +3,8 @@
 
     <string-array name="pre_def_locations">
         <item></item>
-        <item>Bali</item>
         <item>Sydney</item>
+        <item>Bali</item>
         <item>Tel Aviv</item>
         <item>Rio</item>
     </string-array>

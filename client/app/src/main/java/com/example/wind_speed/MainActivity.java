@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     EditText userName;
     EditText pass;
     Button signUp;
+    Button loginButton;
     private LoginButton fbLogin;
     private CallbackManager callbackManager;
     private static final String EMAIL = "email";
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         signUp = (Button) findViewById(R.id.signUpButton);
         fbLogin = (LoginButton) findViewById(R.id.fbLoginButton);
+        loginButton = (Button) findViewById(R.id.loginButton);
 
         // when sign up is clicked, go to Sign up page
         signUp.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +54,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), SignUp.class);
                 startActivity(intent);
+            }
+        });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkInput()){
+                    //TODO LOGIN....
+
+
+                    resetInputs();
+                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                    startActivity(intent);
+                }
+
+                resetInputs();
             }
         });
 
@@ -167,6 +185,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return isValid;
+    }
+
+    private void resetInputs(){
+        userName.setText("");
+        userName.setHint("Username");
+
+        pass.setText("");
+        pass.setHint("Password");
     }
 
 }
