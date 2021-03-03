@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "326717731935",
+    "project_id": "wind-speed-306321",
+    "storage_bucket": "wind-speed-306321.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326717731935:android:6db48f0efce2cb25d717ea",
+        "android_client_info": {
+          "package_name": "com.example.wind_speed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326717731935-g1n9a0pih3f8tohmkoatilertnkk0o10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6C3plgCagm2aAGMwCagmNq4opwc_AxFc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326717731935-g1n9a0pih3f8tohmkoatilertnkk0o10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

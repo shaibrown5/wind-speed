@@ -49,7 +49,6 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO LOG OUT
                 Intent intent = new Intent(v.getContext(), MainActivity.class);
                 startActivity(intent);
             }
