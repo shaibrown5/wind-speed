@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkInput()){
                     Log.i(TAG, "[INPUTS] inputs are correct form");
-                    checkUserCred(userName.getText().toString(), pass.getText().toString());
+                    LogUserIn(userName.getText().toString(), pass.getText().toString());
                 }
 
                 Log.i(TAG, "[INPUTS] inputs are not in correct form");
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
      * @param email - the users email/ username
      * @param password - the users password
      */
-    private void checkUserCred(String email, String password){
+    private void LogUserIn(String email, String password){
         JSONObject requestObject = new JSONObject();
 
         try {
@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
             requestObject.put("password", password);
         }
         catch (JSONException e) {
+            resetInputs();
             Log.e(TAG, "[ERROR] in verifying user");
             Toast.makeText(MainActivity.this, "Please re-enter user and pass", Toast.LENGTH_SHORT).show();
         }
@@ -245,8 +246,9 @@ public class MainActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    resetInputs();
                     Log.e(TAG,"[ERROR] got a json exception");
-                    Toast.makeText(MainActivity.this, "Error occuredPlease re-enter user and pass", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Error occured Please re-enter user and pass", Toast.LENGTH_SHORT).show();
                 }
             }
         },
