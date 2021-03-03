@@ -5,11 +5,6 @@ const bodyParser = require('body-parser');
 let app=express();
 const fs = require('fs');
 const PORT = 8080;
-const SYMBOL = "IBM";
-const FUNCTION = "GLOBAL_QUOTE";
-//alphavantage api key
-const api_key = "'";
-
 //openWether key
 const API_key = "2d49bf528cf4ca56c119aabb471ad948" 
 
@@ -37,9 +32,10 @@ app.use(bodyParser.json());
 app.post('/:user/newuser', (req, res, next) => {
 	console.log(req);
     let email = req.body.email;
-    let firstName = req.body.firstname
-    let lastName = req.body.lastname
-    let Password = req.body.password
+    let firstName = req.body.firstname;
+    let lastName = req.body.lastname;
+    let Password = req.body.password;
+    let token = req.body.token;
 
     console.log(`Received save new user request of ${email}`);
 
@@ -50,7 +46,7 @@ app.post('/:user/newuser', (req, res, next) => {
 		    let db = client.db('mongotestdb');
 		    let collection = db.collection('users');
 		    return collection.insert([
-		        {username: email , firstName : firstName , lastName: lastName ,Password : Password }, 
+		        {username: email , firstName : firstName , lastName: lastName ,Password : Password, Token: token }, 
 		    ]);
 		})
 		.then(() => {let db = client.db('mongotestdb');
@@ -109,30 +105,38 @@ app.post('/:user/check', (req, res, next) => {
     //res.status(200).json({msg: "ok"});
 });
 
+/*  this fucn is  geting a wind speed in a loction  
+	and if the wind speed is above the set point value
+	it send a notification to the user
+*/
 
-//*************Irrelevant , used as an examplee ******************
- /* function fetchAlphaVantage(FUNCTION,SYMBOL,api_key,user, res) {
+function fetchwind(API_key,user,lat,lon,setPoint ,res) {
     const axios = require('axios');
-	axios.get(`https://www.alphavantage.co/query?function=${FUNCTION}&symbol=${SYMBOL}&apikey=${api_key}`)
+	axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_key}`)
 	  .then(response => {
    		client.connect()
-		.then(() => {let db = client.db('mongotest');
-		    let collection = db.collection('users');
-		    let it = collection.find({username: user})
-		    it.forEach((token)=>{
-		    	fcm.send({
-		        to: token.token,
-		        data: {
-		            someKey: "some value"
-		        },
-		        notification: {
-		            title: "message title",
-		            body: response.data["Global Quote"]["05. price"]
-		        }
-		    	});	
-		    })
+		.then(() => {
+			if (response.data["wind"] > setPoint) {
+				console.log("good time to surf! sending notification!")
+				let db = client.db('mongotest');
+			    let collection = db.collection('users');
+			    let it = collection.find({username: user})
+			    /*it.forEach((token)=>{
+			    	fcm.send({
+			        to: token.token,
+			        data: {
+			            someKey: "some value"
+			        },
+			        notification: {
+			            title: "message title",
+			            body: response.data["Global Quote"]["05. price"]
+			        }
+			    	});	
+			    })
+			    console.log("send notification message to app")*/
+			    clearInterval(timerId)
+			 }
 		   });
-		console.log("send notification message to app")
 	    return
 	  })
 
@@ -140,7 +144,7 @@ app.post('/:user/check', (req, res, next) => {
 	  .catch(error => {
 	    console.log(error);
   	});
-}********************************/
+}
 
 
 /* return the current weather for a specific place
@@ -195,20 +199,29 @@ app.post('/:user/forecast',(req, res,next)=>{
 	});
 
 
-//*************Irrelevant , used as an examplee ******************
-/*app.post('/:user/alphavantage', (req, res, next) => {
-    console.log("Got POST request to /alphavantage");
+/*  this func start a intreval that check id the wind speed
+	is above the set point 
+	if so , it wiil send notification to the user
+*/
+app.post('/:user/start', (req, res, next) => {
+	let lat = req.body.lat;
+	let lon = req.body.lon;
+	let setPoint = req.body.setPoint
+    console.log("Got POST request to start checking wind speed periodic");
     console.dir(req.body);
-    timerId = setInterval(fetchAlphaVantage, 10000, FUNCTION, SYMBOL, api_key, req.params.user);
-});**********************************************/
+    timerId = setInterval(fetchwind, 10000,  API_key, req.params.user,lat,lon,setPoint);
+    return res.json({successe :" successfully start "});
+});
 
-//*************Irrelevant , used as an examplee ******************
-/*app.post('/:user/stop', (req, res, next) => {
+/*  this func stop the  intreval that check id the wind speed
+	is above the set point 
+*/
+app.post('/:user/stop', (req, res, next) => {
     console.dir(req.body);
-    console.log("Got POST request to /stop");
+    console.log("Got POST request to stop checking wind speed periodic");
     clearInterval(timerId)
     return res.json({successe :" successfully stop "});
-});**********************************************/
+});
 
 
 app.listen(PORT,() => {
