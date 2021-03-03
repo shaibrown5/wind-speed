@@ -76,7 +76,7 @@ app.post('/:user/check', (req, res, next) => {
     let Password = req.body.password
 
     console.log(`Received request to log in from ${email}`);
-     console.log(`Password :  ${Password}`);
+    console.log(`Password :  ${Password}`);
    // if (!token) return res.status(400).json({err: "missing token"});
     //let targetToken;
     client.connect()
@@ -85,10 +85,10 @@ app.post('/:user/check', (req, res, next) => {
 		    collection.find({username: email , Password : Password}).count((e,r)=>{
 		    	console.log(r)
 		    	if(r >0){
-		    		res.status(200).json({msg: "username and password match "});
+		    		res.status(200).json({msg: "username and password match", match: "true"});
 		    	}
 		    	else {
-		    		res.status(500).json({msg: "email or password dont match  "})
+		    		res.status(200).json({msg: "email or password dont match", match: "false"})
 		    	}
 		    	});
 		    })

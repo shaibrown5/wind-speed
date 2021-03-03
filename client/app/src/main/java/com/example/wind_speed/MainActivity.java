@@ -8,7 +8,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -34,15 +41,18 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton fbLogin;
     private CallbackManager callbackManager;
     protected Bundle facebookInfoBundle;
+    private RequestQueue m_queue;
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
     private static final String TAG = "MainActivity";
     private static final String FBTAG = "facebook main";
+    private static final String m_REQUEST_URL = "http://10.0.2.2:8080/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        m_queue = Volley.newRequestQueue(this);
 
         signUp = (Button) findViewById(R.id.signUpButton);
         fbLogin = (LoginButton) findViewById(R.id.fbLoginButton);
@@ -63,14 +73,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkInput()){
-                    //TODO LOGIN....
-                    Log.i(TAG, "inputs are correct form");
-
-                    resetInputs();
-                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                    startActivity(intent);
+                    Log.i(TAG, "[INPUTS] inputs are correct form");
+                    checkUserCred(userName.getText().toString(), pass.getText().toString());
                 }
 
+                Log.i(TAG, "[INPUTS] inputs are not in correct form");
                 resetInputs();
             }
         });
@@ -107,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //called when an activity I launch exists.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -195,6 +201,62 @@ public class MainActivity extends AppCompatActivity {
         userName.setHint("Username");
         pass.setText(null);
         pass.setHint("Password");
+    }
+
+    /**
+     * This method checks the users login credentials and logs him in if he is in the system
+     * @param email - the users email/ username
+     * @param password - the users password
+     */
+    private void checkUserCred(String email, String password){
+        JSONObject requestObject = new JSONObject();
+
+        try {
+            requestObject.put("email", email);
+            requestObject.put("password", password);
+        }
+        catch (JSONException e) {
+            Log.e(TAG, "[ERROR] in verifying user");
+            Toast.makeText(MainActivity.this, "Please re-enter user and pass", Toast.LENGTH_SHORT).show();
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,  m_REQUEST_URL + email + "/check",
+                requestObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG, "[RESPONSE] Post went through");
+                Log.d(TAG, "[RESPONSE] " + response.toString());
+
+                try {
+                    String respMessage = response.getString("msg");
+                    boolean isMatch = response.getBoolean("match");
+                    Log.i(TAG, "[RESPONSE MESG] " +  respMessage);
+
+                    if (isMatch){
+                        Toast.makeText(MainActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
+                        resetInputs();
+                        Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                        startActivity(intent);
+                    }
+                    else{
+                        userName.setError("Username and password do not match");
+                        Toast.makeText(MainActivity.this, "Wrong username/password", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG,"[ERROR] got a json exception");
+                    Toast.makeText(MainActivity.this, "Error occuredPlease re-enter user and pass", Toast.LENGTH_SHORT).show();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "[RESPONCE ERROR] Failed to Log in - " + error);
+                    }
+                });
+        m_queue.add(req);
     }
 
 }
