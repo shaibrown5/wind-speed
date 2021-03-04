@@ -1,5 +1,6 @@
 package com.example.wind_speed;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -19,6 +20,9 @@ import com.facebook.GraphResponse;;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +31,7 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText userName;
+    public static EditText userName;
     EditText pass;
     Button signUp;
     Button loginButton;
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOCATION = "user_location";
     private static final String TAG = "MainActivity";
     private static final String FBTAG = "facebook main";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +71,11 @@ public class MainActivity extends AppCompatActivity {
                 if (checkInput()){
                     //TODO LOGIN....
                     Log.i(TAG, "inputs are correct form");
-
-                    resetInputs();
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                    Log.i(TAG, "username is :" + userName.getText().toString());
+                    intent.putExtra("username",userName.getText().toString());
+                    resetInputs();
+
                     startActivity(intent);
                 }
 
@@ -104,6 +112,21 @@ public class MainActivity extends AppCompatActivity {
                 // TODO
             }
         });
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        Log.d(TAG, "user token - " + token);
+                    }
+                });
 
     }
 

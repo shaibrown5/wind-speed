@@ -10,7 +10,7 @@ const API_key = "2d49bf528cf4ca56c119aabb471ad948"
 
 const FCM = require('fcm-push');
 
-const FCM_SERVER_KEY = ''
+const FCM_SERVER_KEY = 'AAAATBHk9F8:APA91bFoXJTMlrGasqdUkVgP95s8vaLNUnHRtgsyj62YfdqxOMSjQrp-X3u-s0q4hYzOd_B_eCvLasbh2kUkDMT_WvS11c715HmKK5_lDF6UyeCRcSOK3flM4eatUllUyK9EPX-_WiXR'
 const MongoClient = require('mongodb').MongoClient;
 const MONGO_URL = "mongodb://localhost:27017";
 
@@ -19,10 +19,43 @@ const client = new MongoClient(MONGO_URL, {
     useUnifiedTopology: true
 });
 let timerId;
-
-//let fcm = new FCM(FCM_SERVER_KEY);
+let tokentest = "cgBlhTHFSN-C8HGuJYYqyH:APA91bH-m_dB5yEuX_pFGRZxLyxR2XM5j_svF7DnDAzFsmhEvQdfCKpu-UhyX1Y40BCoH9wUC2YeCrTd3AUhDdNGT3nrDKvuEh2ryhLfgng88TtJtGCJu-oLI7XMk97zMWV9Br63ci_w"
+let fcm = new FCM(FCM_SERVER_KEY);
 
 app.use(bodyParser.json());
+
+
+app.post('/:user/token', (req, res, next) => {
+	console.log("got a request to update token")
+	let token = req.body.token;
+	client.connect()
+			.then(() => {let db = client.db('mongotestdb');
+		    let collection = db.collection('users');
+		    console.log(req.params.user)
+		    let it = collection.find({username: req.params.user})
+		    it.count((err, count)=>{
+		    	console.log(count);
+		    	if(count >= 1){
+		    		 it.forEach((user)=>{
+				    	if (user.Token != token){
+				    		console.log(user.token);
+				    		let id = user._id;
+				    		collection.update({_id:id},{$set:{Token:token}})
+				    		console.log("insert new token");
+				    		res.status(200).json({msg: `update user token successfully `});
+				    	}
+				    	else{
+				    		res.status(200).json({msg: `token is allready update `});
+				    	}
+		    		})
+		    	}
+		    	else{
+		    		res.status(200).json({msg: `no user found with the name ${req.params.user}`});
+		    	}
+		    })
+		    });
+});
+
 
 
 /*insert a new user to db
@@ -88,7 +121,7 @@ app.post('/:user/check', (req, res, next) => {
 		    		res.status(200).json({msg: "username and password match "});
 		    	}
 		    	else {
-		    		res.status(500).json({msg: "email or password dont match  "})
+		    		res.status(200).json({msg: "email or password dont match  "})
 		    	}
 		    	});
 		    })
@@ -98,7 +131,7 @@ app.post('/:user/check', (req, res, next) => {
 		})*/
 		   
 		.catch(err => {
-			//res.status(500).json({msg: "email or password dont match  "})
+			res.status(500).json({msg: "error in server "})
 		    console.error(err);
 		});
 		//console.log("user found");
@@ -223,6 +256,25 @@ app.post('/:user/stop', (req, res, next) => {
     return res.json({successe :" successfully stop "});
 });
 
+app.get('/test', (req, res, next) => {
+    //console.dir(req.body);
+    //console.log("Got POST request to stop checking wind speed periodic");
+    //clearInterval(timerId)
+    fcm.send({
+		        to: tokentest,
+		        data: {
+		            someKey: "some value"
+		        },
+		        notification: {
+		            title: "message title",
+		            body: "testttt"
+		        }
+		    	},(err, response) => {
+        if (err) return res.status(500).json({err: `message sending failed - ${err}`});
+        return res.status(200).json({msg: "sent ok"});
+    });	
+   // return res.json({successe :" successfully  "});
+});
 
 app.listen(PORT,() => {
 	console.log('Example app listening on port 8080!');
