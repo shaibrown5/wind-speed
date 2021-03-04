@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     protected Bundle facebookInfoBundle;
     private RequestQueue m_queue;
     private String fbEmail = "";
+    private String token = "";
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
     private static final String TAG = "MainActivity";
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (checkInput()){
                     Log.i(TAG, "[INPUTS] inputs are correct form");
-                    LogUserIn(userName.getText().toString(), pass.getText().toString());
+                    LogUserIn(userName.getText().toString(), pass.getText().toString(), false);
                 }
 
                 Log.i(TAG, "[INPUTS] inputs are not in correct form");
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                        token = task.getResult();
                         Log.d(TAG, "user token - " + token);
                     }
                 });
@@ -137,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-
         // retrieve users own profile
         // response in the form of json we can get the data from
         GraphRequest graphRequest = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
@@ -162,13 +162,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        // retreive info from graph api
-        facebookInfoBundle = new Bundle();
-        facebookInfoBundle.putString("fields", "id, name, email, location, first_name, last_name");
-
-        graphRequest.setParameters(facebookInfoBundle);
-        graphRequest.executeAsync();
     }
 
     /**
@@ -230,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
      * @param email - the users email/ username
      * @param password - the users password
      */
-    private void LogUserIn(String email, String password){
+    private void LogUserIn(String email, String password, boolean isFaceBook){
         JSONObject requestObject = new JSONObject();
 
         try {
