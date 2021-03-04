@@ -1,5 +1,6 @@
 package com.example.wind_speed;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -26,6 +27,9 @@ import com.facebook.GraphResponse;;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +38,7 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText userName;
+    public static EditText userName;
     EditText pass;
     Button signUp;
     Button loginButton;
@@ -111,6 +115,21 @@ public class MainActivity extends AppCompatActivity {
                 // TODO
             }
         });
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        Log.d(TAG, "user token - " + token);
+                    }
+                });
 
     }
 
@@ -235,8 +254,9 @@ public class MainActivity extends AppCompatActivity {
 
                     if (isMatch){
                         Toast.makeText(MainActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
-                        resetInputs();
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                        intent.putExtra("username",userName.getText().toString());
+                        resetInputs();
                         startActivity(intent);
                     }
                     else{
@@ -255,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "[RESPONCE ERROR] Failed to Log in - " + error);
+                        Log.e(TAG, "[RESPONSE ERROR] Failed to Log in - " + error);
                     }
                 });
         m_queue.add(req);

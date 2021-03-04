@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-app/build.gradle
-app/src/main/AndroidManifest.xml
+/app/build.gradle
+*/AndroidManifest.xml
