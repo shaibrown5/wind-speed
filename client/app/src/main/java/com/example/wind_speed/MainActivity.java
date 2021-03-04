@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(FBTAG, "login was success");
                 String userId = loginResult.getAccessToken().getUserId();
                 setResult(RESULT_OK);
-                Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                startActivity(intent);
             }
 
             @Override
@@ -153,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
                             fbEmail = object.getString("email");
                             Log.d(FBTAG, "[FACEBOOK] the user email is " + fbEmail);
                             String id = object.getString("id");
+
+                            Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                            intent.putExtra("username",fbEmail);
+                            resetInputs();
+                            startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e(FBTAG, "[ERROR] with fabook on complete");
@@ -178,13 +181,6 @@ public class MainActivity extends AppCompatActivity {
             if (currentAccessToken == null){
                 LoginManager.getInstance().logOut();
                 Log.i(FBTAG, " user is logged out of facebook");
-            }
-            else{
-                Log.d(FBTAG, "[FACEBOOK LOGIN] the user email is " + fbEmail);
-                Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                intent.putExtra("username",fbEmail);
-                resetInputs();
-                startActivity(intent);
             }
         }
     };
