@@ -54,11 +54,11 @@ app.post('/:user/newuser', (req, res, next) => {
 		    let targetToken = collection.find( {username: email})
 		   })
 		.catch(err => {
-			res.status(500),json({msg: "can't save new user"})
+			res.status(200),json({msg: "can't save new user", added: "false"})
 		    console.error(err);
 		});
 		console.log("saved ok" );
-    res.status(200).json({msg: "saved ok"});
+    res.status(200).json({msg: "saved ok", added: "true"});
 });
 
 
