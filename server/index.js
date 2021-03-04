@@ -10,7 +10,7 @@ const API_key = "2d49bf528cf4ca56c119aabb471ad948"
 
 const FCM = require('fcm-push');
 
-const FCM_SERVER_KEY = 'AAAATBHk9F8:APA91bFoXJTMlrGasqdUkVgP95s8vaLNUnHRtgsyj62YfdqxOMSjQrp-X3u-s0q4hYzOd_B_eCvLasbh2kUkDMT_WvS11c715HmKK5_lDF6UyeCRcSOK3flM4eatUllUyK9EPX-_WiXR'
+const FCM_SERVER_KEY = 'FCM API_key'
 const MongoClient = require('mongodb').MongoClient;
 const MONGO_URL = "mongodb://localhost:27017";
 
@@ -19,7 +19,7 @@ const client = new MongoClient(MONGO_URL, {
     useUnifiedTopology: true
 });
 let timerId;
-let tokentest = "cgBlhTHFSN-C8HGuJYYqyH:APA91bH-m_dB5yEuX_pFGRZxLyxR2XM5j_svF7DnDAzFsmhEvQdfCKpu-UhyX1Y40BCoH9wUC2YeCrTd3AUhDdNGT3nrDKvuEh2ryhLfgng88TtJtGCJu-oLI7XMk97zMWV9Br63ci_w"
+let tokentest = "test token"
 let fcm = new FCM(FCM_SERVER_KEY);
 
 app.use(bodyParser.json());

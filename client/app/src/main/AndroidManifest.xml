@@ -55,7 +55,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyARjYX1j8BIJ9pAb9LQok61JIMe7nYnTCw" />
+            android:value="{Google map API key}" />
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
