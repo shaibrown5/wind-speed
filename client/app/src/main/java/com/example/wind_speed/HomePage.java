@@ -67,7 +67,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
 
         //get user name
         Intent i = getIntent();
-        USERNAME =  USERNAME = i.getExtras().getString("username");
+        USERNAME = i.getExtras().getString("username");
         Log.d(TAG, "username is : " + USERNAME);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.

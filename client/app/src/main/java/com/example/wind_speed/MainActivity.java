@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     protected Bundle facebookInfoBundle;
     private RequestQueue m_queue;
+    private String fbEmail = "";
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
     private static final String TAG = "MainActivity";
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -148,10 +150,12 @@ public class MainActivity extends AppCompatActivity {
                         // {"name":"Shai Brown","email":"email@gmail.com","location":{"id":"long_id","name":"city_name, country"},"first_name":"Shai","last_name":"Brown","id":"long_id"}
                         try {
                             Log.d(FBTAG, object.toString());
-                            String name = object.getString("name");
+                            fbEmail = object.getString("email");
+                            Log.d(FBTAG, "[FACEBOOK] the user email is " + fbEmail);
                             String id = object.getString("id");
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Log.e(FBTAG, "[ERROR] with fabook on complete");
                         }
                     }
                 });
@@ -176,7 +180,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(FBTAG, " user is logged out of facebook");
             }
             else{
+                Log.d(FBTAG, "[FACEBOOK LOGIN] the user email is " + fbEmail);
                 Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                intent.putExtra("username",fbEmail);
+                resetInputs();
                 startActivity(intent);
             }
         }
