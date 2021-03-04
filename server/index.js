@@ -87,11 +87,11 @@ app.post('/:user/newuser', (req, res, next) => {
 		    let targetToken = collection.find( {username: email})
 		   })
 		.catch(err => {
-			res.status(500),json({msg: "can't save new user"})
+			res.status(200),json({msg: "can't save new user", added: "false"})
 		    console.error(err);
 		});
 		console.log("saved ok" );
-    res.status(200).json({msg: "saved ok"});
+    res.status(200).json({msg: "saved ok", added: "true"});
 });
 
 
@@ -109,7 +109,7 @@ app.post('/:user/check', (req, res, next) => {
     let Password = req.body.password
 
     console.log(`Received request to log in from ${email}`);
-     console.log(`Password :  ${Password}`);
+    console.log(`Password :  ${Password}`);
    // if (!token) return res.status(400).json({err: "missing token"});
     //let targetToken;
     client.connect()
@@ -118,10 +118,10 @@ app.post('/:user/check', (req, res, next) => {
 		    collection.find({username: email , Password : Password}).count((e,r)=>{
 		    	console.log(r)
 		    	if(r >0){
-		    		res.status(200).json({msg: "username and password match "});
+		    		res.status(200).json({msg: "username and password match", match: "true"});
 		    	}
 		    	else {
-		    		res.status(200).json({msg: "email or password dont match  "})
+		    		res.status(200).json({msg: "email or password dont match", match: "false"})
 		    	}
 		    	});
 		    })
@@ -131,7 +131,7 @@ app.post('/:user/check', (req, res, next) => {
 		})*/
 		   
 		.catch(err => {
-			res.status(500).json({msg: "error in server "})
+			res.status(200).json({msg: "error in server", match: "false"})
 		    console.error(err);
 		});
 		//console.log("user found");
@@ -272,7 +272,7 @@ app.get('/test', (req, res, next) => {
 		    	},(err, response) => {
         if (err) return res.status(500).json({err: `message sending failed - ${err}`});
         return res.status(200).json({msg: "sent ok"});
-    });	
+    });
    // return res.json({successe :" successfully  "});
 });
 
