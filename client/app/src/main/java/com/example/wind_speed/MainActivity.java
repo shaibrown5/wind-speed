@@ -270,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean isMatch = response.getBoolean("match");
                     Log.i(TAG, "[RESPONSE MESG] " +  respMessage);
 
+                    // if the user has been found in the db then login, else show error
                     if (isMatch){
                         Toast.makeText(MainActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
@@ -336,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean hasBeenAdded = response.getBoolean("added");
                     Log.d(TAG, "[RESPONSE MESG] " +  respMessage);
 
+                    //if the user has been successfully added to the db then login automatically,
                     if (hasBeenAdded){
                         Log.d(FBTAG, "[FACEBOOK SIGN UP] user found added to db");
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
@@ -389,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean isMatch = response.getBoolean("match");
                     Log.i(TAG, "[RESPONSE MESG] " +  respMessage);
 
+                    // if the user is in the db already login, else sign up
                     if (isMatch){
                         Log.d(FBTAG, "[FACEBOOK LOGIN] user found in db");
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);

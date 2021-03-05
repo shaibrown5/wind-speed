@@ -139,6 +139,7 @@ public class SignUp extends AppCompatActivity {
                     boolean hasBeenAdded = response.getBoolean("added");
                     Log.d(TAG, "[RESPONSE MESG] " +  respMessage);
 
+                    // if the user has been added to the db correctly
                     if (hasBeenAdded){
                         Toast.makeText(SignUp.this, "Welcome, Please Log In!", Toast.LENGTH_SHORT).show();
                         resetInputs();
@@ -229,5 +230,4 @@ public class SignUp extends AppCompatActivity {
         verifyPass.setText(null);
         verifyPass.setHint("Re-enter password");
     }
-
 }
