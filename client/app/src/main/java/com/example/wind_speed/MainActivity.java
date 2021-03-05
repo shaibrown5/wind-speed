@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 Log.i(TAG, "[INPUTS] inputs are not in correct form");
-                resetInputs();
+                //resetInputs();
             }
         });
 
@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
                         intent.putExtra("username",userName.getText().toString());
+                        Log.i(TAG,"CHECK "+userName.getText().toString());
                         resetInputs();
                         startActivity(intent);
                     }

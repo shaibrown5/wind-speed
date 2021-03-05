@@ -10,7 +10,7 @@ const API_key = "2d49bf528cf4ca56c119aabb471ad948"
 
 const FCM = require('fcm-push');
 
-const FCM_SERVER_KEY = 'FCM API_key'
+const FCM_SERVER_KEY = '${API_key}'
 const MongoClient = require('mongodb').MongoClient;
 const MONGO_URL = "mongodb://localhost:27017";
 
@@ -88,11 +88,11 @@ app.post('/:user/newuser', (req, res, next) => {
 		    let targetToken = collection.find( {username: email})
 		   })
 		.catch(err => {
-			res.status(200),json({msg: "can't save new user", added: "false"})
+			res.status(500),json({msg: "can't save new user"})
 		    console.error(err);
 		});
 		console.log("saved ok" );
-    res.status(200).json({msg: "saved ok", added: "true"});
+    res.status(200).json({msg: "saved ok"});
 });
 
 
@@ -105,34 +105,27 @@ app.post('/:user/newuser', (req, res, next) => {
 */
 app.post('/:user/check', (req, res, next) => {
     let email = req.body.email;
-    //let firstName = req.body.firstname
-    //let lastName = req.body.lastname
     let Password = req.body.password
 
     console.log(`Received request to log in from ${email}`);
-    console.log(`Password :  ${Password}`);
-   // if (!token) return res.status(400).json({err: "missing token"});
-    //let targetToken;
+     console.log(`Password :  ${Password}`);
+
     client.connect()
 		.then(() => {let db = client.db('mongotestdb');
 		    let collection = db.collection('users');
 		    collection.find({username: email , Password : Password}).count((e,r)=>{
 		    	console.log(r)
 		    	if(r >0){
-		    		res.status(200).json({msg: "username and password match", match: "true"});
+		    		res.status(200).json({msg: "username and password match "});
 		    	}
 		    	else {
-		    		res.status(200).json({msg: "email or password dont match", match: "false"})
+		    		res.status(200).json({msg: "email or password dont match  "})
 		    	}
 		    	});
 		    })
-		/*.then((num)=>{ 
-		    console.log(num);
-			//callback(num);
-		})*/
 		   
 		.catch(err => {
-			res.status(200).json({msg: "error in server", match: "false"})
+			res.status(500).json({msg: "error in server "})
 		    console.error(err);
 		});
 		//console.log("user found");
@@ -150,27 +143,38 @@ function fetchwind(API_key,user,lat,lon,setPoint ,res) {
 	  .then(response => {
    		client.connect()
 		.then(() => {
-			if (response.data["wind"] > setPoint) {
+			//console.log(response);
+			console.log(`the wind speed is ${response.data["wind"]["speed"]} and the setPoint is ${setPoint}`)
+			if (response.data["wind"]["speed"] > setPoint) {
 				console.log("good time to surf! sending notification!")
-				let db = client.db('mongotest');
+				console.log(user);
+				let db = client.db('mongotestdb');
 			    let collection = db.collection('users');
 			    let it = collection.find({username: user})
-			    /*it.forEach((token)=>{
-			    	fcm.send({
-			        to: token.token,
-			        data: {
-			            someKey: "some value"
-			        },
-			        notification: {
-			            title: "message title",
-			            body: response.data["Global Quote"]["05. price"]
-			        }
-			    	});	
-			    })
-			    console.log("send notification message to app")*/
-			    clearInterval(timerId)
-			 }
-		   });
+			    it.count((err, count)=>{
+		    	console.log(count);
+		    	if(count >= 1){
+		    		 it.forEach((user)=>{
+				    		console.log(user.Token);
+					    	fcm.send({
+					        to: user.Token,
+					        data: {
+
+					            someKey: "some value"
+					        },
+					        notification: {
+					            title: "message title",
+					            body: "it is a good time to surf"
+					        }
+					    	});	
+					    	console.log("send notification message to app")
+			    			clearInterval(timerId)
+				    		
+				    	})
+		    		}
+		    	})
+		   	}
+		   })
 	    return
 	  })
 
@@ -257,10 +261,10 @@ app.post('/:user/stop', (req, res, next) => {
     return res.json({successe :" successfully stop "});
 });
 
+/*  test the firebase could message 
+*/
 app.get('/test', (req, res, next) => {
-    //console.dir(req.body);
-    //console.log("Got POST request to stop checking wind speed periodic");
-    //clearInterval(timerId)
+
     fcm.send({
 		        to: tokentest,
 		        data: {
@@ -273,7 +277,7 @@ app.get('/test', (req, res, next) => {
 		    	},(err, response) => {
         if (err) return res.status(500).json({err: `message sending failed - ${err}`});
         return res.status(200).json({msg: "sent ok"});
-    });
+    });	
    // return res.json({successe :" successfully  "});
 });
 

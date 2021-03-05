@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -20,30 +19,31 @@
 
     <Button
         android:id="@+id/winspeedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="176dp"
+        android:layout_height="59dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Get wind speed"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        android:layout_marginBottom="19dp"
+        android:text="Get wind speed notification"
+        app:layout_constraintBottom_toTopOf="@+id/setPoint"
         app:layout_constraintEnd_toStartOf="@+id/logOutButton"
-        app:layout_constraintHorizontal_bias="0.857"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/infoText"
-        android:layout_width="108dp"
+        android:layout_width="0dp"
         android:layout_height="49dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginRight="6dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="3dp"
         android:text="Choose a Location:"
         android:textColor="#010209"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/winspeedButton"
+        app:layout_constraintEnd_toStartOf="@+id/setPoint"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -64,10 +64,11 @@
         <!--            android:id="@+id/mapView"-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="638dp" />-->
+
         <Spinner
             android:id="@+id/locationSpin"
             android:layout_width="match_parent"
-            android:layout_height="38dp"
+            android:layout_height="69dp"
             android:dropDownWidth="match_parent"
             android:visibility="visible"
             tools:visibility="visible" />
@@ -76,9 +77,23 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="641dp"
+            android:layout_height="516dp"
             tools:context=".MapsActivity" />
 
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/setPoint"
+        android:layout_width="127dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="117dp"
+        android:layout_marginRight="117dp"
+        android:layout_marginBottom="627dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/infoText"
+        app:layout_constraintTop_toBottomOf="@+id/winspeedButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
