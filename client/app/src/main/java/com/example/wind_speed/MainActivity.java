@@ -106,13 +106,16 @@ public class MainActivity extends AppCompatActivity {
                 // App code
                 Log.i(FBTAG, "login was canceled");
                 setResult(RESULT_CANCELED);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
 
             @Override
             public void onError(FacebookException exception) {
                 // App code
                 Log.e(FBTAG, "login encountered error");
-                // TODO
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -148,20 +151,31 @@ public class MainActivity extends AppCompatActivity {
                         // {"name":"Shai Brown","email":"email@gmail.com","location":{"id":"long_id","name":"city_name, country"},"first_name":"Shai","last_name":"Brown","id":"long_id"}
                         try {
                             Log.d(FBTAG, object.toString());
-                            fbEmail = object.getString("email");
-                            Log.d(FBTAG, "[FACEBOOK] the user email is " + fbEmail);
+                            // get user info from facebook
+                            String fbEmail = object.getString("email");
+                            Log.d(FBTAG, "[FACEBOOK OC] the user email is " + fbEmail);
                             String id = object.getString("id");
+                            Log.d(FBTAG, "[FACEBOOK OC] the user is is " + id);
+                            String firstName = object.getString("first_name");
+                            Log.d(FBTAG, "[FACEBOOK OC] the user firstName is " + firstName);
+                            String lastName = object.getString("last_name");
+                            Log. d(FBTAG, "[FACEBOOK OC] the user lastName is " + lastName);
 
-                            Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                            intent.putExtra("username",fbEmail);
-                            resetInputs();
-                            startActivity(intent);
+                            // send message tos erver to see if he is logged in
+                            Log.d(FBTAG, "[FACEBOOK DB] checking if user is int DB");
+                            facebookLogin(fbEmail, id, firstName, lastName, token);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e(FBTAG, "[ERROR] with fabook on complete");
                         }
                     }
                 });
+
+        // retreive info from graph api
+        facebookInfoBundle = new Bundle();
+        facebookInfoBundle.putString("fields", "id, name, email, location, first_name, last_name");
+        graphRequest.setParameters(facebookInfoBundle);
+        graphRequest.executeAsync();
     }
 
     /**
@@ -188,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
         accessTokenTracker.stopTracking();
     }
 
+    /**
+     * This method checks that the input is in proper form
+     * @return true if the input is correct, false otherwise
+     */
     private boolean checkInput() {
         boolean isValid = true;
 
@@ -210,6 +228,10 @@ public class MainActivity extends AppCompatActivity {
         return isValid;
     }
 
+
+    /**
+     * This method resets the input to their original hints
+     */
     private void resetInputs(){
         Log.i(TAG, "reseting inputs");
         userName.setText(null);
@@ -276,5 +298,123 @@ public class MainActivity extends AppCompatActivity {
                 });
         m_queue.add(req);
     }
+
+
+    /**
+     * This method sends the user data to the server to sign them up with their fb credentials
+     * @param email - the users email/ username
+     * @param password - the users password
+     * @param firstName - the users first name
+     * @param lastName - the users last name
+     * @param token - the users unique firebase token
+     */
+    public void signFaceBookUserUp(String email, String password, String firstName, String lastName, String token){
+        JSONObject requestObject = new JSONObject();
+
+        try {
+            requestObject.put("email", email);
+            requestObject.put("password", password);
+            requestObject.put("firstname", firstName);
+            requestObject.put("lastname", lastName);
+            requestObject.put("token", token);
+        }
+        catch (JSONException e) {
+            Log.e(TAG, "[ERROR] in verifying user");
+            Toast.makeText(MainActivity.this, "Error please sign up normally", Toast.LENGTH_SHORT).show();
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,  m_REQUEST_URL + email + "/newuser",
+                requestObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG, "[RESPONSE] Post went through");
+                Log.d(TAG, "[RESPONSE] " + response.toString());
+
+                try {
+                    String respMessage = response.getString("msg");
+                    boolean hasBeenAdded = response.getBoolean("added");
+                    Log.d(TAG, "[RESPONSE MESG] " +  respMessage);
+
+                    if (hasBeenAdded){
+                        Log.d(FBTAG, "[FACEBOOK SIGN UP] user found added to db");
+                        Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                        intent.putExtra("username",fbEmail);
+                        resetInputs();
+                        startActivity(intent);
+                    }
+                    else{
+                        Toast.makeText(MainActivity.this, "An Error occurred, sign up normally", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG,"[ERROR] got a json exception");
+                    Toast.makeText(MainActivity.this, "Error occured, sign up normally", Toast.LENGTH_SHORT).show();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "[RESPONSE ERROR] Failed to sign up - " + error);
+                    }
+                });
+
+        m_queue.add(req);
+    }
+
+
+    private void facebookLogin(String email, String password, String firstName, String lastName, String token){
+        JSONObject requestObject = new JSONObject();
+
+        try {
+            requestObject.put("email", email);
+            requestObject.put("password", password);
+        }
+        catch (JSONException e) {
+            resetInputs();
+            Log.e(TAG, "[ERROR] in verifying user");
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,  m_REQUEST_URL + email + "/check",
+                requestObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG, "[RESPONSE] Post went through");
+                Log.d(TAG, "[RESPONSE] " + response.toString());
+
+                try {
+                    String respMessage = response.getString("msg");
+                    boolean isMatch = response.getBoolean("match");
+                    Log.i(TAG, "[RESPONSE MESG] " +  respMessage);
+
+                    if (isMatch){
+                        Log.d(FBTAG, "[FACEBOOK LOGIN] user found in db");
+                        Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                        intent.putExtra("username",fbEmail);
+                        resetInputs();
+                        startActivity(intent);
+                    }
+                    else{
+                        Log.d(FBTAG, "[FACEBOOK LOGIN] no user found, attempting signup");
+                        signFaceBookUserUp(email, password, firstName, lastName, token);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG,"[ERROR] got a json exception");
+                    Toast.makeText(MainActivity.this, "Error occured Please re sign in", Toast.LENGTH_SHORT).show();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "[RESPONSE ERROR] Failed to Log in - " + error);
+                    }
+                });
+        m_queue.add(req);
+    }
+
 
 }
