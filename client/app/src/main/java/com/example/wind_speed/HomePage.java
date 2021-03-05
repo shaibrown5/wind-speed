@@ -56,7 +56,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_page);
-        //insert lat and lon
+        //insert lat and long
         map.put("Sydney",new double[]{-34, 151});
         map.put("Bali",new double[]{-8.319837279796443, 115.09333358682619});
         map.put("Rio",new double[]{-22.84630623087871, -43.34842123862497});
@@ -109,7 +109,8 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
     }
 
     /**
-     * This method is activated when an item is selected from list
+     * This method activtes when an item is changed in the list.
+     * the relevant info is then retrieved
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

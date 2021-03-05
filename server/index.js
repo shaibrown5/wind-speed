@@ -71,6 +71,7 @@ app.post('/:user/newuser', (req, res, next) => {
     let token = req.body.token;
 
     console.log(`Received save new user request of ${email}`);
+    console.log(`the token of the user is ${token}`);
 
    // if (!token) return res.status(400).json({err: "missing token"});
     //let targetToken;
