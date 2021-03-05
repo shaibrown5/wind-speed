@@ -69,6 +69,7 @@ public class SignUp extends AppCompatActivity {
                 }
                 else {
                     Log.i(TAG, "information is correctly filled");
+                    Log.d(TAG, "[TOKEN INFO] the token is " + token);
                     signUserUp(email.getText().toString(), pass.getText().toString(), name.getText().toString(), lastName.getText().toString(), token);
                 }
             }
@@ -138,6 +139,7 @@ public class SignUp extends AppCompatActivity {
                     boolean hasBeenAdded = response.getBoolean("added");
                     Log.d(TAG, "[RESPONSE MESG] " +  respMessage);
 
+                    // if the user has been added to the db correctly
                     if (hasBeenAdded){
                         Toast.makeText(SignUp.this, "Welcome, Please Log In!", Toast.LENGTH_SHORT).show();
                         resetInputs();
@@ -228,5 +230,4 @@ public class SignUp extends AppCompatActivity {
         verifyPass.setText(null);
         verifyPass.setHint("Re-enter password");
     }
-
 }
