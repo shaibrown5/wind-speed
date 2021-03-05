@@ -415,6 +415,4 @@ public class MainActivity extends AppCompatActivity {
                 });
         m_queue.add(req);
     }
-
-
 }
