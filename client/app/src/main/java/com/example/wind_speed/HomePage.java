@@ -8,8 +8,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +45,7 @@ import java.util.List;
 public class HomePage extends AppCompatActivity implements AdapterView.OnItemSelectedListener, OnMapReadyCallback {
 
     Button logOut;
+    EditText setPoint;
     Button windpeedButton;
     private GoogleMap mMap;
     private Spinner spinnerLocation;
@@ -67,8 +70,11 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
 
         //get user name
         Intent i = getIntent();
-        USERNAME =  USERNAME = i.getExtras().getString("username");
+        USERNAME = i.getExtras().getString("username");
         Log.d(TAG, "username is : " + USERNAME);
+
+        //init edit Text of set point value
+        setPoint = (EditText) findViewById(R.id.setPoint);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -92,6 +98,28 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
                 startActivity(intent);
             }
         });
+
+        //*** init thw wind get nonfiction button
+        // if the value is valid, send a request to the server
+        //else, rise a toast pop up
+        windpeedButton = (Button) findViewById(R.id.winspeedButton);
+        windpeedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String setPointString = setPoint.getText().toString();
+                if (!setPointString.isEmpty() && setPointString.matches("-?(0|[1-9]\\d*)")){
+                    Log.d(TAG,"set point value is " + setPointString );
+                    int setPointint = Integer.parseInt(setPointString);
+                    startCheck(setPointint,spinnerLocation.getSelectedItem().toString());
+                }
+                else {
+                    Log.d(TAG,"enter a valid Set Point value");
+                    Toast.makeText(HomePage.this, "enter setPoint value", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        //firebase request to get token of the user
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -193,7 +221,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
                 return null;
             }
 
-            // Defines the contents of the InfoWindow
+            // Defines the contents of the InfoWindow to be display on the marker
             @Override
             public View getInfoContents(Marker arg0) {
 
@@ -232,5 +260,36 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    /**
+        this method get a set point value and a Location
+        and send a request to the server to check periodically
+        if the wind speed is greater then the set point value
+    * */
+    private void startCheck(int setPoint, String chosenLocation){
+        JSONObject requestObject = new JSONObject();
+        try {
+            requestObject.put("lat", map.get(chosenLocation)[0]);
+            requestObject.put("lon", map.get(chosenLocation)[1]);
+            requestObject.put("setPoint", setPoint);
+        }
+        catch (JSONException e) {}
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, SERVER_ADDRESS + USERNAME + "/start", requestObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i(TAG,  response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "Failed to send start notification pusher - " + error);
+                    }
+                });
+        req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        _queue.add(req);
+
     }
 }

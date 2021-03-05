@@ -9,7 +9,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -38,17 +45,20 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton fbLogin;
     private CallbackManager callbackManager;
     protected Bundle facebookInfoBundle;
+    private RequestQueue m_queue;
+    private String fbEmail = "";
+    private String token = "";
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
     private static final String TAG = "MainActivity";
     private static final String FBTAG = "facebook main";
-
-
+    private static final String m_REQUEST_URL = "http://10.0.2.2:8080/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        m_queue = Volley.newRequestQueue(this);
 
         signUp = (Button) findViewById(R.id.signUpButton);
         fbLogin = (LoginButton) findViewById(R.id.fbLoginButton);
@@ -69,17 +79,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkInput()){
-                    //TODO LOGIN....
-                    Log.i(TAG, "inputs are correct form");
-                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                    Log.i(TAG, "username is :" + userName.getText().toString());
-                    intent.putExtra("username",userName.getText().toString());
-                    resetInputs();
-
-                    startActivity(intent);
+                    Log.i(TAG, "[INPUTS] inputs are correct form");
+                    LogUserIn(userName.getText().toString(), pass.getText().toString(), false);
                 }
 
-                resetInputs();
+                Log.i(TAG, "[INPUTS] inputs are not in correct form");
+                //resetInputs();
             }
         });
 
@@ -94,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(FBTAG, "login was success");
                 String userId = loginResult.getAccessToken().getUserId();
                 setResult(RESULT_OK);
-                Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                startActivity(intent);
             }
 
             @Override
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -123,19 +127,17 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         // Get new FCM registration token
-                        String token = task.getResult();
+                        token = task.getResult();
                         Log.d(TAG, "user token - " + token);
                     }
                 });
 
     }
 
-    //called when an activity I launch exists.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-
         // retrieve users own profile
         // response in the form of json we can get the data from
         GraphRequest graphRequest = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
@@ -146,20 +148,20 @@ public class MainActivity extends AppCompatActivity {
                         // {"name":"Shai Brown","email":"email@gmail.com","location":{"id":"long_id","name":"city_name, country"},"first_name":"Shai","last_name":"Brown","id":"long_id"}
                         try {
                             Log.d(FBTAG, object.toString());
-                            String name = object.getString("name");
+                            fbEmail = object.getString("email");
+                            Log.d(FBTAG, "[FACEBOOK] the user email is " + fbEmail);
                             String id = object.getString("id");
+
+                            Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                            intent.putExtra("username",fbEmail);
+                            resetInputs();
+                            startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Log.e(FBTAG, "[ERROR] with fabook on complete");
                         }
                     }
                 });
-
-        // retreive info from graph api
-        facebookInfoBundle = new Bundle();
-        facebookInfoBundle.putString("fields", "id, name, email, location, first_name, last_name");
-
-        graphRequest.setParameters(facebookInfoBundle);
-        graphRequest.executeAsync();
     }
 
     /**
@@ -172,10 +174,6 @@ public class MainActivity extends AppCompatActivity {
             if (currentAccessToken == null){
                 LoginManager.getInstance().logOut();
                 Log.i(FBTAG, " user is logged out of facebook");
-            }
-            else{
-                Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                startActivity(intent);
             }
         }
     };
@@ -218,6 +216,66 @@ public class MainActivity extends AppCompatActivity {
         userName.setHint("Username");
         pass.setText(null);
         pass.setHint("Password");
+    }
+
+    /**
+     * This method checks the users login credentials and logs him in if he is in the system
+     * @param email - the users email/ username
+     * @param password - the users password
+     */
+    private void LogUserIn(String email, String password, boolean isFaceBook){
+        JSONObject requestObject = new JSONObject();
+
+        try {
+            requestObject.put("email", email);
+            requestObject.put("password", password);
+        }
+        catch (JSONException e) {
+            resetInputs();
+            Log.e(TAG, "[ERROR] in verifying user");
+            Toast.makeText(MainActivity.this, "Please re-enter user and pass", Toast.LENGTH_SHORT).show();
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,  m_REQUEST_URL + email + "/check",
+                requestObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG, "[RESPONSE] Post went through");
+                Log.d(TAG, "[RESPONSE] " + response.toString());
+
+                try {
+                    String respMessage = response.getString("msg");
+                    boolean isMatch = response.getBoolean("match");
+                    Log.i(TAG, "[RESPONSE MESG] " +  respMessage);
+
+                    if (isMatch){
+                        Toast.makeText(MainActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                        intent.putExtra("username",userName.getText().toString());
+                        Log.i(TAG,"CHECK "+userName.getText().toString());
+                        resetInputs();
+                        startActivity(intent);
+                    }
+                    else{
+                        userName.setError("Username and password do not match");
+                        Toast.makeText(MainActivity.this, "Wrong username/password", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    resetInputs();
+                    Log.e(TAG,"[ERROR] got a json exception");
+                    Toast.makeText(MainActivity.this, "Error occured Please re-enter user and pass", Toast.LENGTH_SHORT).show();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "[RESPONSE ERROR] Failed to Log in - " + error);
+                    }
+                });
+        m_queue.add(req);
     }
 
 }

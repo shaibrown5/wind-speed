@@ -10,7 +10,7 @@ const API_key = "2d49bf528cf4ca56c119aabb471ad948"
 
 const FCM = require('fcm-push');
 
-const FCM_SERVER_KEY = 'AAAATBHk9F8:APA91bFoXJTMlrGasqdUkVgP95s8vaLNUnHRtgsyj62YfdqxOMSjQrp-X3u-s0q4hYzOd_B_eCvLasbh2kUkDMT_WvS11c715HmKK5_lDF6UyeCRcSOK3flM4eatUllUyK9EPX-_WiXR'
+const FCM_SERVER_KEY = '${API_key}'
 const MongoClient = require('mongodb').MongoClient;
 const MONGO_URL = "mongodb://localhost:27017";
 
@@ -19,7 +19,7 @@ const client = new MongoClient(MONGO_URL, {
     useUnifiedTopology: true
 });
 let timerId;
-let tokentest = "cgBlhTHFSN-C8HGuJYYqyH:APA91bH-m_dB5yEuX_pFGRZxLyxR2XM5j_svF7DnDAzFsmhEvQdfCKpu-UhyX1Y40BCoH9wUC2YeCrTd3AUhDdNGT3nrDKvuEh2ryhLfgng88TtJtGCJu-oLI7XMk97zMWV9Br63ci_w"
+let tokentest = "test token"
 let fcm = new FCM(FCM_SERVER_KEY);
 
 app.use(bodyParser.json());
@@ -104,14 +104,11 @@ app.post('/:user/newuser', (req, res, next) => {
 */
 app.post('/:user/check', (req, res, next) => {
     let email = req.body.email;
-    //let firstName = req.body.firstname
-    //let lastName = req.body.lastname
     let Password = req.body.password
 
     console.log(`Received request to log in from ${email}`);
      console.log(`Password :  ${Password}`);
-   // if (!token) return res.status(400).json({err: "missing token"});
-    //let targetToken;
+
     client.connect()
 		.then(() => {let db = client.db('mongotestdb');
 		    let collection = db.collection('users');
@@ -125,10 +122,6 @@ app.post('/:user/check', (req, res, next) => {
 		    	}
 		    	});
 		    })
-		/*.then((num)=>{ 
-		    console.log(num);
-			//callback(num);
-		})*/
 		   
 		.catch(err => {
 			res.status(500).json({msg: "error in server "})
@@ -149,27 +142,38 @@ function fetchwind(API_key,user,lat,lon,setPoint ,res) {
 	  .then(response => {
    		client.connect()
 		.then(() => {
-			if (response.data["wind"] > setPoint) {
+			//console.log(response);
+			console.log(`the wind speed is ${response.data["wind"]["speed"]} and the setPoint is ${setPoint}`)
+			if (response.data["wind"]["speed"] > setPoint) {
 				console.log("good time to surf! sending notification!")
-				let db = client.db('mongotest');
+				console.log(user);
+				let db = client.db('mongotestdb');
 			    let collection = db.collection('users');
 			    let it = collection.find({username: user})
-			    /*it.forEach((token)=>{
-			    	fcm.send({
-			        to: token.token,
-			        data: {
-			            someKey: "some value"
-			        },
-			        notification: {
-			            title: "message title",
-			            body: response.data["Global Quote"]["05. price"]
-			        }
-			    	});	
-			    })
-			    console.log("send notification message to app")*/
-			    clearInterval(timerId)
-			 }
-		   });
+			    it.count((err, count)=>{
+		    	console.log(count);
+		    	if(count >= 1){
+		    		 it.forEach((user)=>{
+				    		console.log(user.Token);
+					    	fcm.send({
+					        to: user.Token,
+					        data: {
+
+					            someKey: "some value"
+					        },
+					        notification: {
+					            title: "message title",
+					            body: "it is a good time to surf"
+					        }
+					    	});	
+					    	console.log("send notification message to app")
+			    			clearInterval(timerId)
+				    		
+				    	})
+		    		}
+		    	})
+		   	}
+		   })
 	    return
 	  })
 
@@ -256,10 +260,10 @@ app.post('/:user/stop', (req, res, next) => {
     return res.json({successe :" successfully stop "});
 });
 
+/*  test the firebase could message 
+*/
 app.get('/test', (req, res, next) => {
-    //console.dir(req.body);
-    //console.log("Got POST request to stop checking wind speed periodic");
-    //clearInterval(timerId)
+
     fcm.send({
 		        to: tokentest,
 		        data: {

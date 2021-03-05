@@ -96,6 +96,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         _queue.add(req);
     }
 
+    /**
+     * This method build a notification out of the received  message
+     * @param text - the text of the  received  message
+     * @param context - context of the app
+     */
     private void doNotification(Context context, String text){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
