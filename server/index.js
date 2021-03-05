@@ -88,11 +88,11 @@ app.post('/:user/newuser', (req, res, next) => {
 		    let targetToken = collection.find( {username: email})
 		   })
 		.catch(err => {
-			res.status(500),json({msg: "can't save new user"})
+			res.status(200),json({msg: "can't save new user", added: "false"})
 		    console.error(err);
 		});
 		console.log("saved ok" );
-    res.status(200).json({msg: "saved ok"});
+    res.status(200).json({msg: "saved ok", added: "true"});
 });
 
 
@@ -108,7 +108,7 @@ app.post('/:user/check', (req, res, next) => {
     let Password = req.body.password
 
     console.log(`Received request to log in from ${email}`);
-     console.log(`Password :  ${Password}`);
+    console.log(`Password :  ${Password}`);
 
     client.connect()
 		.then(() => {let db = client.db('mongotestdb');
@@ -116,16 +116,16 @@ app.post('/:user/check', (req, res, next) => {
 		    collection.find({username: email , Password : Password}).count((e,r)=>{
 		    	console.log(r)
 		    	if(r >0){
-		    		res.status(200).json({msg: "username and password match "});
+		    		res.status(200).json({msg: "username and password match", match: "true"});
 		    	}
 		    	else {
-		    		res.status(200).json({msg: "email or password dont match  "})
+		    		res.status(200).json({msg: "email or password dont match", match: "false"})
 		    	}
 		    	});
 		    })
 		   
 		.catch(err => {
-			res.status(500).json({msg: "error in server "})
+			res.status(200).json({msg: "error in server", match: "false"})
 		    console.error(err);
 		});
 		//console.log("user found");
