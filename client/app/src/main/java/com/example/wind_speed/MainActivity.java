@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     protected Bundle facebookInfoBundle;
     private RequestQueue m_queue;
-    private String fbEmail = "";
     private String token = "";
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
@@ -341,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
                     if (hasBeenAdded){
                         Log.d(FBTAG, "[FACEBOOK SIGN UP] user found added to db");
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                        intent.putExtra("username",fbEmail);
+                        intent.putExtra("username",email);
                         resetInputs();
                         startActivity(intent);
                     }
@@ -395,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
                     if (isMatch){
                         Log.d(FBTAG, "[FACEBOOK LOGIN] user found in db");
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                        intent.putExtra("username",fbEmail);
+                        intent.putExtra("username",email);
                         resetInputs();
                         startActivity(intent);
                     }

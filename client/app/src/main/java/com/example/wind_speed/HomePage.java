@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -47,6 +49,10 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
     Button logOut;
     EditText setPoint;
     Button windpeedButton;
+    Button weekButton;
+    //starts with sydney
+    private double lat = -34;
+    private double lon = 151;
     private GoogleMap mMap;
     private Spinner spinnerLocation;
     private static final String TAG = "home_page";
@@ -119,6 +125,14 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
             }
         });
 
+        weekButton = (Button) findViewById(R.id.weekButton);
+        weekButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getWeekData();
+            }
+        });
+
         //firebase request to get token of the user
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -146,6 +160,8 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
             String chosenLocation = parent.getItemAtPosition(position).toString();
             Log.i(TAG, "the locations is: " + chosenLocation);
             Log.i(TAG, "lat and lon is: " + map.get(chosenLocation)[0]+" "+map.get(chosenLocation)[1]);
+            lat = map.get(chosenLocation)[0];
+            lon = map.get(chosenLocation)[1];
             LatLng pos = new LatLng(map.get(chosenLocation)[0], map.get(chosenLocation)[1]);
             mMap.clear();
             //mMap.addMarker(new MarkerOptions().position(pos).title("Marker in "+chosenLocation));
@@ -177,6 +193,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
                             MarkerOptions m = new MarkerOptions();
                             mMap.addMarker(new MarkerOptions().position(pos).title( windSpeed +"," + windDeg +","+ Temp));
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
+                            Toast.makeText(HomePage.this, "Press on marker to see info!", Toast.LENGTH_SHORT).show();
                         }
                     },
                     new Response.ErrorListener() {
@@ -288,5 +305,66 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
         req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         _queue.add(req);
 
+    }
+
+    /**
+     * This method gets the api info and send it on
+     */
+    private void getWeekData(){
+        JSONObject requestObject = new JSONObject();
+
+        try {
+            requestObject.put("lat", lat);
+            requestObject.put("lon", lon);
+        }
+        catch (JSONException e) {
+            Log.e(TAG, "[ERROR] adding lat and long");
+        }
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,  SERVER_ADDRESS + USERNAME + "/forecast",
+                requestObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                // response: D/week-activity: [RESPONSE] {"day_1":"3\/6\/2021, 11:00:00 AM","wind_speed_1":4.23,"wind_deg_1":1,"temp_1":17.3,"day_2":"3\/7\/2021, 11:00:00 AM","wind_speed_2":2.99,"wind_deg_2":337,"temp_2":17.4,"day_3":"3\/8\/2021, 11:00:00 AM","wind_speed_3":3.35,"wind_deg_3":244,"temp_3":17.01,"day_4":"3\/9\/2021, 11:00:00 AM","wind_speed_4":2.34,"wind_deg_4":35,"temp_4":18.84,"day_5":"3\/10\/2021, 11:00:00 AM","wind_speed_5":6.16,"wind_deg_5":180,"temp_5":23.52,"day_6":"3\/11\/2021, 11:00:00 AM","wind_speed_6":10.35,"wind_deg_6":267,"temp_6":17.97,"day_7":"3\/12\/2021, 11:00:00 AM","wind_speed_7":4.32,"wind_deg_7":322,"temp_7":16.05}
+                //"day_1"  :"3\/6\/2021, 11:00:00 AM",  "wind_speed_1":4.23,  "wind_deg_1":1,  "temp_1":17.3
+                Log.i(TAG, "[RESPONSE] Post went through");
+                Log.d(TAG, "[RESPONSE] " + response.toString());
+                String[] day = new String[7];
+                String[] windSpeed = new String[7];
+                String[] windDeg = new String[7];
+                String[] temp = new String[7];
+
+                try{
+                    for (int i = 1; i < 8 ; i++) {
+                        day[i-1] = response.getString(("day_" + i));
+                        windSpeed[i-1] = response.getString("wind_speed_" + i);
+                        windDeg[i-1] = response.getString("wind_deg_" + i);
+                        temp[i-1] = response.getString("temp_" + i);
+                    }
+
+                    Intent intent = new Intent(getApplicationContext(), WeekActivity.class);
+                    intent.putExtra("day", day);
+                    intent.putExtra("windSpeed", windSpeed);
+                    intent.putExtra("windDeg", windDeg);
+                    intent.putExtra("temp", temp);
+                    startActivity(intent);
+
+                }
+                catch (JSONException js){
+                    js.printStackTrace();
+                }
+
+
+
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "[RESPONSE ERROR] Failed to get information- " + error);
+                    }
+                });
+
+        _queue.add(req);
     }
 }
