@@ -365,7 +365,16 @@ public class MainActivity extends AppCompatActivity {
         m_queue.add(req);
     }
 
-
+    /**
+     * This method is activivated when the user is logged in.
+     * it checks if the user is in the db, and if so logs in,
+     * else, it adds user to the db
+     * @param email - user email
+     * @param password - user password
+     * @param firstName - user first name
+     * @param lastName - user last name
+     * @param token - tooken
+     */
     private void facebookLogin(String email, String password, String firstName, String lastName, String token){
         JSONObject requestObject = new JSONObject();
 

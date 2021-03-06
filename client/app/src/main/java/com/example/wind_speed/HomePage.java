@@ -308,7 +308,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
     }
 
     /**
-     * This method gets the api info and send it on
+     * This method gets the api info and activstes the week view
      */
     private void getWeekData(){
         JSONObject requestObject = new JSONObject();
@@ -343,6 +343,7 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
                     }
 
                     Intent intent = new Intent(getApplicationContext(), WeekActivity.class);
+                    intent.putExtra("username", USERNAME);
                     intent.putExtra("day", day);
                     intent.putExtra("windSpeed", windSpeed);
                     intent.putExtra("windDeg", windDeg);
@@ -353,8 +354,6 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
                 catch (JSONException js){
                     js.printStackTrace();
                 }
-
-
 
             }
         },

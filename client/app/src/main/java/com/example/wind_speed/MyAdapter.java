@@ -17,7 +17,6 @@ public class MyAdapter extends RecyclerView.Adapter<com.example.wind_speed.MyAda
     private String[] m_windSpeed;
     private String[] m_windDeg;
     private String[] m_temp;
-    private String textColor;
     Context context;
 
     public MyAdapter(Context ct, String[] day, String[] windSpeed, String[] windDeg, String[] temp){
