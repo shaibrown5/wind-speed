@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         userName = (EditText) findViewById(R.id.userName);
         pass = (EditText) findViewById(R.id.userPassword);
 
-        // when sign up is clicked, go to Sign up page
+        // when sign up is clicked, goes to Sign up page
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

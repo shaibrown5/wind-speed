@@ -326,7 +326,6 @@ public class HomePage extends AppCompatActivity implements AdapterView.OnItemSel
             @Override
             public void onResponse(JSONObject response) {
                 // response: D/week-activity: [RESPONSE] {"day_1":"3\/6\/2021, 11:00:00 AM","wind_speed_1":4.23,"wind_deg_1":1,"temp_1":17.3,"day_2":"3\/7\/2021, 11:00:00 AM","wind_speed_2":2.99,"wind_deg_2":337,"temp_2":17.4,"day_3":"3\/8\/2021, 11:00:00 AM","wind_speed_3":3.35,"wind_deg_3":244,"temp_3":17.01,"day_4":"3\/9\/2021, 11:00:00 AM","wind_speed_4":2.34,"wind_deg_4":35,"temp_4":18.84,"day_5":"3\/10\/2021, 11:00:00 AM","wind_speed_5":6.16,"wind_deg_5":180,"temp_5":23.52,"day_6":"3\/11\/2021, 11:00:00 AM","wind_speed_6":10.35,"wind_deg_6":267,"temp_6":17.97,"day_7":"3\/12\/2021, 11:00:00 AM","wind_speed_7":4.32,"wind_deg_7":322,"temp_7":16.05}
-                //"day_1"  :"3\/6\/2021, 11:00:00 AM",  "wind_speed_1":4.23,  "wind_deg_1":1,  "temp_1":17.3
                 Log.i(TAG, "[RESPONSE] Post went through");
                 Log.d(TAG, "[RESPONSE] " + response.toString());
                 String[] day = new String[7];
