@@ -209,6 +209,7 @@ app.post('/:user/now',(req, res,next)=>{
 app.post('/:user/forecast',(req, res,next)=>{
 	let lat = req.body.lat;
 	let lon = req.body.lon;
+	console.log(`lat is ${lat} and long ${lon}`);
 	const axios = require('axios');
 	axios.get(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${API_key}`)
 	  .then(response => { 

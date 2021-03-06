@@ -9,66 +9,53 @@
         android:id="@+id/logOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
         android:text="Log out"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/weekButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.88" />
 
     <Button
         android:id="@+id/winspeedButton"
-        android:layout_width="176dp"
-        android:layout_height="59dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="187dp"
+        android:layout_height="62dp"
         android:layout_marginBottom="19dp"
-        android:text="Get wind speed notification"
+        android:text="Wind speed notification"
         app:layout_constraintBottom_toTopOf="@+id/setPoint"
-        app:layout_constraintEnd_toStartOf="@+id/logOutButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/infoText"
-        android:layout_width="0dp"
-        android:layout_height="49dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="3dp"
-        android:text="Choose a Location:"
-        android:textColor="#010209"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/setPoint"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/infoText">
+        app:layout_constraintStart_toStartOf="parent">
 
         <!--        <com.google.android.gms.maps.MapView-->
         <!--            android:id="@+id/mapView"-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="638dp" />-->
 
+        <TextView
+            android:id="@+id/infoText"
+            android:layout_width="216dp"
+            android:layout_height="wrap_content"
+            android:text="Choose a Location:"
+            android:textColor="#010209"
+            android:textSize="18sp" />
+
         <Spinner
             android:id="@+id/locationSpin"
             android:layout_width="match_parent"
-            android:layout_height="69dp"
+            android:layout_height="46dp"
             android:dropDownWidth="match_parent"
             android:visibility="visible"
             tools:visibility="visible" />
@@ -77,23 +64,33 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="516dp"
+            android:layout_height="399dp"
             tools:context=".MapsActivity" />
 
     </LinearLayout>
 
     <EditText
         android:id="@+id/setPoint"
-        android:layout_width="127dp"
-        android:layout_height="38dp"
-        android:layout_marginEnd="117dp"
-        android:layout_marginRight="117dp"
-        android:layout_marginBottom="627dp"
+        android:layout_width="139dp"
+        android:layout_height="51dp"
         android:ems="10"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/infoText"
-        app:layout_constraintTop_toBottomOf="@+id/winspeedButton" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/weekButton"
+        android:layout_width="160dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="8dp"
+        android:text="Weekly data"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.987"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

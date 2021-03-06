@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     protected Bundle facebookInfoBundle;
     private RequestQueue m_queue;
-    private String fbEmail = "";
     private String token = "";
     private static final String EMAIL = "email";
     private static final String LOCATION = "user_location";
@@ -341,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
                     if (hasBeenAdded){
                         Log.d(FBTAG, "[FACEBOOK SIGN UP] user found added to db");
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                        intent.putExtra("username",fbEmail);
+                        intent.putExtra("username",email);
                         resetInputs();
                         startActivity(intent);
                     }
@@ -366,7 +365,16 @@ public class MainActivity extends AppCompatActivity {
         m_queue.add(req);
     }
 
-
+    /**
+     * This method is activivated when the user is logged in.
+     * it checks if the user is in the db, and if so logs in,
+     * else, it adds user to the db
+     * @param email - user email
+     * @param password - user password
+     * @param firstName - user first name
+     * @param lastName - user last name
+     * @param token - tooken
+     */
     private void facebookLogin(String email, String password, String firstName, String lastName, String token){
         JSONObject requestObject = new JSONObject();
 
@@ -395,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
                     if (isMatch){
                         Log.d(FBTAG, "[FACEBOOK LOGIN] user found in db");
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                        intent.putExtra("username",fbEmail);
+                        intent.putExtra("username",email);
                         resetInputs();
                         startActivity(intent);
                     }
