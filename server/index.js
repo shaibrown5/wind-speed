@@ -185,7 +185,7 @@ function fetchwind(API_key,user,lat,lon,setPoint ,res) {
 }
 
 
-/* return the current weather for a specific place
+/* returns the current weather for a specific place
 	the call get Latitude & Longitude of a specific place
 	and run a api request.
 	the call return a json with wind speed , wind deg and temperature

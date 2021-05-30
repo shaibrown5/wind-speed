@@ -25,8 +25,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.xml.namespace.QName;
-
 
 public class SignUp extends AppCompatActivity {
 
